@@ -24,4 +24,8 @@ public record AccessPolicy(
             throw new IllegalArgumentException("policyData is required");
         }
     }
+
+    public String getCanonical() {
+        return String.join("|", type.name(), String.valueOf(chainId), contractAddress, policyData);
+    }
 }

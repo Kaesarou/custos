@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class EvmPersonalSignVerifierTest {
 
-    private final EvmPersonalSignVerifier verifier = new EvmPersonalSignVerifier();
+    private final EvmPersonalSignVerifier verifier = new EvmPersonalSignVerifier(new EvmPersonalSignAddressRecoverer());
 
     @Test
     void shouldAcceptValidPersonalSignSignature() {

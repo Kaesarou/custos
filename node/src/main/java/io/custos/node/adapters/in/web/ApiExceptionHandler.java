@@ -22,7 +22,8 @@ public class ApiExceptionHandler {
             InvalidPublisherSignatureException.class,
             InvalidWalletSignatureException.class,
             SecretShareAccessDeniedException.class,
-            WalletNonceAlreadyUsedException.class
+            WalletNonceAlreadyUsedException.class,
+            EvmSignatureRecoveryException.class
     })
     public ResponseEntity<Map<String, Object>> handleForbidden(RuntimeException ex) {
         return response(HttpStatus.FORBIDDEN, ex.getMessage());

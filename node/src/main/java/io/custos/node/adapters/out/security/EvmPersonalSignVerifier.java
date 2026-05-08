@@ -4,19 +4,18 @@ import io.custos.node.core.application.exception.InvalidWalletSignatureException
 import io.custos.node.core.application.port.out.WalletSignatureVerifier;
 import io.custos.node.core.domain.RetrieveSecretShareSignatureChallenge;
 import org.springframework.stereotype.Service;
-import org.web3j.crypto.Keys;
-import org.web3j.crypto.Sign;
 import org.web3j.crypto.WalletUtils;
-import org.web3j.utils.Numeric;
-
-import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 
 import static io.custos.node.core.application.exception.errorcode.WalletSignatureErrorCode.*;
 
 @Service
 public class EvmPersonalSignVerifier implements WalletSignatureVerifier {
+
+    private final EvmPersonalSignAddressRecoverer evmPersonalSignAddressRecoverer;
+
+    public EvmPersonalSignVerifier(EvmPersonalSignAddressRecoverer evmPersonalSignAddressRecoverer) {
+        this.evmPersonalSignAddressRecoverer = evmPersonalSignAddressRecoverer;
+    }
 
     public void verifyRetrieveSecretSignature(
             String secretId,
@@ -32,7 +31,7 @@ public class EvmPersonalSignVerifier implements WalletSignatureVerifier {
                 nonce
         ).message();
 
-        String recoveredAddress = recoverAddress(message, walletSignature);
+        String recoveredAddress = evmPersonalSignAddressRecoverer.recoverAddress(message, walletSignature);
 
         if (!recoveredAddress.equalsIgnoreCase(userAddress)) {
             throw new InvalidWalletSignatureException(
@@ -61,48 +60,6 @@ public class EvmPersonalSignVerifier implements WalletSignatureVerifier {
             throw new InvalidWalletSignatureException(
                     MISSING_WALLET_SIGNATURE,
                     "Wallet signature is required"
-            );
-        }
-    }
-
-    private String recoverAddress(String message, String signature) {
-        try {
-            byte[] signatureBytes = Numeric.hexStringToByteArray(signature);
-
-            if (signatureBytes.length != 65) {
-                throw new InvalidWalletSignatureException(
-                        INVALID_WALLET_SIGNATURE,
-                        "Invalid signature length"
-                );
-            }
-
-            byte v = signatureBytes[64];
-
-            if (v < 27) {
-                v += 27;
-            }
-
-            byte[] r = Arrays.copyOfRange(signatureBytes, 0, 32);
-            byte[] s = Arrays.copyOfRange(signatureBytes, 32, 64);
-
-            Sign.SignatureData signatureData = new Sign.SignatureData(v, r, s);
-
-            byte[] messageBytes = message.getBytes(StandardCharsets.UTF_8);
-            byte[] prefixedMessageHash = Sign.getEthereumMessageHash(messageBytes);
-
-            BigInteger publicKey = Sign.signedMessageHashToKey(
-                    prefixedMessageHash,
-                    signatureData
-            );
-
-            return "0x" + Keys.getAddress(publicKey);
-
-        } catch (InvalidWalletSignatureException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new InvalidWalletSignatureException(
-                    SIGNATURE_VERIFICATION_FAILED,
-                    "Unable to verify wallet signature"
             );
         }
     }

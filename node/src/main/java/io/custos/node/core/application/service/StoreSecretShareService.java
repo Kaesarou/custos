@@ -28,9 +28,8 @@ public class StoreSecretShareService implements StoreSecretShareUseCase {
 
     @Override
     public void store(StoreSecretShareCommand command) {
-        if (!publisherSignatureVerifier.isValid(command)) {
-            throw new InvalidPublisherSignatureException();
-        }
+
+        this.publisherSignatureVerifier.verifyStoreSecretSignature(command);
 
         repository.save(new StoredSecretShare(
                 command.secretId(),

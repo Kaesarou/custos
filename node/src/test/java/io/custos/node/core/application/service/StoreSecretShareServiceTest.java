@@ -1,6 +1,7 @@
 package io.custos.node.core.application.service;
 
 import io.custos.node.core.application.exception.InvalidPublisherSignatureException;
+import io.custos.node.core.application.exception.errorcode.WalletSignatureErrorCode;
 import io.custos.node.core.application.port.in.command.StoreSecretShareCommand;
 import io.custos.node.core.application.port.out.PublisherSignatureVerifier;
 import io.custos.node.core.application.port.out.SecretShareRepository;
@@ -41,7 +42,7 @@ class StoreSecretShareServiceTest {
     void shouldStoreSecretShareWhenPublisherSignatureIsValid() {
         StoreSecretShareCommand command = validCommand();
 
-        when(publisherSignatureVerifier.isValid(command)).thenReturn(true);
+        doNothing().when(publisherSignatureVerifier).verifyStoreSecretSignature(command);
 
         service.store(command);
 
@@ -58,7 +59,10 @@ class StoreSecretShareServiceTest {
     void shouldRejectSecretShareWhenPublisherSignatureIsInvalid() {
         StoreSecretShareCommand command = validCommand();
 
-        when(publisherSignatureVerifier.isValid(command)).thenReturn(false);
+        doThrow(new InvalidPublisherSignatureException(WalletSignatureErrorCode.INVALID_WALLET_SIGNATURE,
+                "Invalid wallet signature")).when(publisherSignatureVerifier)
+                .verifyStoreSecretSignature(command);
+
 
         assertThrows(InvalidPublisherSignatureException.class, () -> service.store(command));
 
