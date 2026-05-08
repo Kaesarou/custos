@@ -11,6 +11,6 @@ public record RetrieveSecretShareSignatureChallenge(
             secretId: %s
             userAddress: %s
             nonce: %s
-            """.formatted(secretId, userAddress, nonce).stripTrailing();
+            """.formatted(secretId, userAddress.toLowerCase(), nonce).stripTrailing();
     }
 }

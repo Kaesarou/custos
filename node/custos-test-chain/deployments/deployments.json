@@ -12,7 +12,7 @@
     },
     "bob": {
       "address": "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC",
-      "privateKey": "0x5de4111afa1a4b4decbf2c90db9948f15b3f944e7ad665bab4c520d8515d8c"
+      "privateKey": "0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a"
     }
   },
   "contracts": {

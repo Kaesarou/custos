@@ -26,6 +26,6 @@ public record AccessPolicy(
     }
 
     public String getCanonical() {
-        return String.join("|", type.name(), String.valueOf(chainId), contractAddress, policyData);
+        return String.join("|", type.name(), String.valueOf(chainId), contractAddress.toLowerCase(), policyData);
     }
 }

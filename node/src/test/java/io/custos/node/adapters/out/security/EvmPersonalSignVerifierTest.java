@@ -15,7 +15,7 @@ class EvmPersonalSignVerifierTest {
                 "1",
                 "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
                 "test-nonce-1234",
-                "0x2eaae67211205e5ad48847d3a64251b2ec1d0b3bedee679a468127aa842aa8400c4ef9939ec8c628fbe9d240255d411532baed6e76a2c2e99d92d166cb3cfbb71c"
+                "0x825415a329279b10c39560d83fca7aeb2f93e311bb1478c5d6560767dbc5b1496735e96af0c5b1ac844e792dd54a226496725fe1fc41630e17b670978eb875fe1b"
         );
     }
 

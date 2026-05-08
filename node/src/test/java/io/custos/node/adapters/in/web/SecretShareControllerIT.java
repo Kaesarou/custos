@@ -120,7 +120,7 @@ class SecretShareControllerIT {
                         .content("""
                                 {
                                   "userAddress": "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC",
-                                  "walletSignature": "0x2eaae67211205e5ad48847d3a64251b2ec1d0b3bedee679a468127aa842aa8400c4ef9939ec8c628fbe9d240255d411532baed6e76a2c2e99d92d166cb3cfbb71c",
+                                  "walletSignature": "0x825415a329279b10c39560d83fca7aeb2f93e311bb1478c5d6560767dbc5b1496735e96af0c5b1ac844e792dd54a226496725fe1fc41630e17b670978eb875fe1b",
                                   "readerPublicKey": "0xREADER_PUBLIC_KEY_TEST",
                                   "nonce": "test-nonce-1234"
                                 }
@@ -139,8 +139,8 @@ class SecretShareControllerIT {
                     "contractAddress": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
                     "policyData": "{\\"tokenId\\":\\"1\\",\\"minBalance\\":\\"1\\"}"
                   },
-                  "publisherAddress": "0xPublisher",
-                  "publisherSignature": "publisher-signature"
+                  "publisherAddress": "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC",
+                  "publisherSignature": "0xda63e0b40990ee76ea8d76a5707f6014077826b581f3a387110310cee9c71a3073da1c1576e16ab64154e46afc35f804e8487950153eaf15be461d38c75e6b571c"
                 }
                 """;
     }
@@ -149,7 +149,7 @@ class SecretShareControllerIT {
         return """
                 {
                   "userAddress": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
-                  "walletSignature": "0x2eaae67211205e5ad48847d3a64251b2ec1d0b3bedee679a468127aa842aa8400c4ef9939ec8c628fbe9d240255d411532baed6e76a2c2e99d92d166cb3cfbb71c",
+                  "walletSignature": "0x825415a329279b10c39560d83fca7aeb2f93e311bb1478c5d6560767dbc5b1496735e96af0c5b1ac844e792dd54a226496725fe1fc41630e17b670978eb875fe1b",
                   "readerPublicKey": "0xREADER_PUBLIC_KEY_TEST",
                   "nonce": "%s"
                 }

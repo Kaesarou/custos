@@ -11,7 +11,7 @@ const nonce = 'test-nonce-1234';
 
 const message = `Custos retrieve secret share
 secretId: ${secretId}
-userAddress: ${wallet.address}
+userAddress: ${wallet.address.toLowerCase()}
 nonce: ${nonce}`;
 
 async function main() {

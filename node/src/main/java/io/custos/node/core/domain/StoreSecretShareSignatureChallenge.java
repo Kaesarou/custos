@@ -12,9 +12,9 @@ public record StoreSecretShareSignatureChallenge(
                 secretId: %s
                 publisherAddress: %s
                 encryptedShareHash: %s
-                policy: %s
+                policyHash: %s
                 """.formatted(secretId,
-                        publisherAddress,
+                        publisherAddress.toLowerCase(),
                         encryptedShareHash,
                         policyHash)
                 .stripTrailing();
