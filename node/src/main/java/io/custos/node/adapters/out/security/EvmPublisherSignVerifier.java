@@ -1,7 +1,6 @@
 package io.custos.node.adapters.out.security;
 
 import io.custos.node.core.application.exception.InvalidPublisherSignatureException;
-import io.custos.node.core.application.exception.InvalidWalletSignatureException;
 import io.custos.node.core.application.port.in.command.StoreSecretShareCommand;
 import io.custos.node.core.application.port.out.PublisherSignatureVerifier;
 import io.custos.node.core.domain.StoreSecretShareSignatureChallenge;
@@ -43,7 +42,7 @@ public class EvmPublisherSignVerifier implements PublisherSignatureVerifier {
         String recoveredAddress = evmPersonalSignAddressRecoverer.recoverAddress(message, command.publisherSignature());
 
         if (!recoveredAddress.equalsIgnoreCase(command.publisherAddress())) {
-            throw new InvalidWalletSignatureException(
+            throw new InvalidPublisherSignatureException(
                     INVALID_WALLET_SIGNATURE,
                     "Wallet signature does not match publisher address"
             );

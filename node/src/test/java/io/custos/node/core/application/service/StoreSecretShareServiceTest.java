@@ -7,8 +7,10 @@ import io.custos.node.core.application.port.out.PublisherSignatureVerifier;
 import io.custos.node.core.application.port.out.SecretShareRepository;
 import io.custos.node.core.domain.model.AccessPolicy;
 import io.custos.node.core.domain.model.PolicyType;
+import io.custos.node.core.domain.model.StoredSecretShare;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InOrder;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -67,6 +69,23 @@ class StoreSecretShareServiceTest {
         assertThrows(InvalidPublisherSignatureException.class, () -> service.store(command));
 
         verifyNoInteractions(repository);
+    }
+
+    @Test
+    void shouldVerifyPublisherSignatureBeforeSavingSecretShare() {
+        SecretShareRepository repository = mock(SecretShareRepository.class);
+        PublisherSignatureVerifier verifier = mock(PublisherSignatureVerifier.class);
+        Clock clock = Clock.fixed(Instant.parse("2026-05-04T10:15:30Z"), ZoneOffset.UTC);
+
+        StoreSecretShareService service = new StoreSecretShareService(clock, repository, verifier);
+
+        StoreSecretShareCommand command = validCommand();
+
+        service.store(command);
+
+        InOrder inOrder = inOrder(verifier, repository);
+        inOrder.verify(verifier).verifyStoreSecretSignature(command);
+        inOrder.verify(repository).save(any(StoredSecretShare.class));
     }
 
     private StoreSecretShareCommand validCommand() {

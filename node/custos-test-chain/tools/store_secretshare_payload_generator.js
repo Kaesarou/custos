@@ -69,8 +69,6 @@ function buildStoreSecretShareMessage({
 }
 
 async function main() {
-  console.log(publisher.privateKey.length);
-  console.log(/^0x[0-9a-fA-F]{64}$/.test(publisher.privateKey));
 
   const wallet = new Wallet(publisher.privateKey);
 
