@@ -64,7 +64,7 @@ public class SecretShareController {
         return new AccessPolicy(
                 PolicyType.valueOf(policyDto.type()),
                 policyDto.chainId(),
-                policyDto.validatorContract(),
+                policyDto.contractAddress(),
                 policyDto.policyData()
         );
     }

@@ -1,6 +1,5 @@
 package io.custos.node.adapters.out.blockchain.policy;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.custos.node.adapters.out.blockchain.ChainRpcResolver;
 import io.custos.node.core.application.port.out.AccessPolicyValidator;
@@ -9,20 +8,9 @@ import io.custos.node.core.domain.PolicyValidationResult;
 import io.custos.node.core.domain.model.AccessPolicy;
 import io.custos.node.core.domain.model.PolicyType;
 import org.springframework.stereotype.Service;
-import org.web3j.abi.FunctionEncoder;
-import org.web3j.abi.FunctionReturnDecoder;
-import org.web3j.abi.TypeReference;
-import org.web3j.abi.datatypes.Address;
-import org.web3j.abi.datatypes.Function;
-import org.web3j.abi.datatypes.generated.Uint256;
 import org.web3j.crypto.WalletUtils;
-import org.web3j.protocol.Web3j;
-import org.web3j.protocol.core.DefaultBlockParameterName;
-import org.web3j.protocol.core.methods.request.Transaction;
-import org.web3j.protocol.http.HttpService;
 
 import java.math.BigInteger;
-import java.util.List;
 
 import static io.custos.node.core.application.exception.errorcode.PolicyErrorCode.*;
 import static io.custos.node.core.application.exception.errorcode.WalletErrorCode.INVALID_WALLET;
@@ -32,13 +20,16 @@ public class EvmErc1155BalancePolicyValidator implements AccessPolicyValidator {
 
     private final ObjectMapper objectMapper;
     private final ChainRpcResolver chainRpcResolver;
+    private final EvmErc1155BalanceReader balanceReader;
 
     public EvmErc1155BalancePolicyValidator(
             ObjectMapper objectMapper,
-            ChainRpcResolver chainRpcResolver
+            ChainRpcResolver chainRpcResolver,
+            EvmErc1155BalanceReader balanceReader
     ) {
         this.objectMapper = objectMapper;
         this.chainRpcResolver = chainRpcResolver;
+        this.balanceReader = balanceReader;
     }
 
     @Override
@@ -89,7 +80,7 @@ public class EvmErc1155BalancePolicyValidator implements AccessPolicyValidator {
         }
 
         try {
-            BigInteger balance = callErc1155BalanceOf(
+            BigInteger balance = balanceReader.balanceOf(
                     rpcUrl.get(),
                     policy.contractAddress(),
                     walletAddress,
@@ -105,53 +96,5 @@ public class EvmErc1155BalancePolicyValidator implements AccessPolicyValidator {
         } catch (Exception e) {
             return PolicyValidationResult.invalid(ON_CHAIN_CALL_FAILED.name());
         }
-    }
-
-    private BigInteger callErc1155BalanceOf(
-            String rpcUrl,
-            String contractAddress,
-            String walletAddress,
-            BigInteger tokenId
-    ) throws Exception {
-
-        Web3j web3j = Web3j.build(new HttpService(rpcUrl));
-
-        Function function = new Function(
-                "balanceOf",
-                List.of(
-                        new Address(walletAddress),
-                        new Uint256(tokenId)
-                ),
-                List.of(new TypeReference<Uint256>() {
-                })
-        );
-
-        String encodedFunction = FunctionEncoder.encode(function);
-
-        Transaction transaction = Transaction.createEthCallTransaction(
-                walletAddress,
-                contractAddress,
-                encodedFunction
-        );
-
-        var response = web3j.ethCall(transaction, DefaultBlockParameterName.LATEST).send();
-
-        if (response.hasError()) {
-            throw new IllegalStateException(response.getError().getMessage());
-        }
-
-        String value = response.getValue();
-
-        if (value == null || value.equals("0x")) {
-            throw new IllegalStateException("Empty response from contract");
-        }
-
-        var decoded = FunctionReturnDecoder.decode(value, function.getOutputParameters());
-
-        if (decoded.isEmpty()) {
-            throw new IllegalStateException("Unable to decode balanceOf response");
-        }
-
-        return (BigInteger) decoded.getFirst().getValue();
     }
 }
