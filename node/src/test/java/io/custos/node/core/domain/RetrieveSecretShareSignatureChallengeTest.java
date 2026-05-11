@@ -11,13 +11,15 @@ class RetrieveSecretShareSignatureChallengeTest {
         String message = new RetrieveSecretShareSignatureChallenge(
                 "1",
                 "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+                "reader-public-key",
                 "test-nonce-1234"
         ).message();
 
         assertEquals("""
-                Custos retrieve secret share
-                secretId: 1
-                userAddress: 0x70997970c51812dc3a010c7d01b50e0d17dc79c8
-                nonce: test-nonce-1234""", message);
+            Custos retrieve secret share
+            secretId: 1
+            userAddress: 0x70997970c51812dc3a010c7d01b50e0d17dc79c8
+            readerPublicKey: reader-public-key
+            nonce: test-nonce-1234""", message);
     }
 }

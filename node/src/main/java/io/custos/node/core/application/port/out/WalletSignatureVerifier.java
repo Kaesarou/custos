@@ -1,10 +1,7 @@
 package io.custos.node.core.application.port.out;
 
+import io.custos.node.core.application.port.in.command.RetrieveSecretShareCommand;
+
 public interface WalletSignatureVerifier {
-    void verifyRetrieveSecretSignature(
-            String secretId,
-            String userAddress,
-            String nonce,
-            String walletSignature
-    );
+    void verifyRetrieveSecretSignature(RetrieveSecretShareCommand retrieveSecretShareCommand);
 }

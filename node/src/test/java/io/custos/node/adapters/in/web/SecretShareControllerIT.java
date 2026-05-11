@@ -149,9 +149,9 @@ class SecretShareControllerIT {
         return """
                 {
                   "userAddress": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
-                  "walletSignature": "0x825415a329279b10c39560d83fca7aeb2f93e311bb1478c5d6560767dbc5b1496735e96af0c5b1ac844e792dd54a226496725fe1fc41630e17b670978eb875fe1b",
-                  "readerPublicKey": "0xREADER_PUBLIC_KEY_TEST",
-                  "nonce": "%s"
+                  "walletSignature": "0x22965675a0fc18c4f9b7ac04b6d4621ab690be18c00d85018162a0d36a0a0fd849b0a56467e8cdb6bbb178ae227458e25a3aeb3e52a0fffe277b142931f968211c",
+                  "readerPublicKey": "y5VMaQ_llLbDlKwKwV0au2VWPiijb125n_fvOSoS61o",
+                  "nonce": "test-nonce-1234"
                 }
                 """.formatted(nonce);
     }

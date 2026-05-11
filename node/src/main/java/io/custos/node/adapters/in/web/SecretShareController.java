@@ -54,7 +54,7 @@ public class SecretShareController {
         return new RetrieveSecretShareResponseDto(
                 delivery.secretId(),
                 delivery.nodeId(),
-                delivery.protectedShare(),
+                ProtectedShareDto.fromDomain(delivery.protectedShare()),
                 delivery.nodeSignature(),
                 delivery.deliveredAt().toString()
         );

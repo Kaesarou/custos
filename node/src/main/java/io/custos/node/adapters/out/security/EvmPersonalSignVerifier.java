@@ -1,6 +1,7 @@
 package io.custos.node.adapters.out.security;
 
 import io.custos.node.core.application.exception.InvalidWalletSignatureException;
+import io.custos.node.core.application.port.in.command.RetrieveSecretShareCommand;
 import io.custos.node.core.application.port.out.WalletSignatureVerifier;
 import io.custos.node.core.domain.RetrieveSecretShareSignatureChallenge;
 import org.springframework.stereotype.Service;
@@ -17,23 +18,19 @@ public class EvmPersonalSignVerifier implements WalletSignatureVerifier {
         this.evmPersonalSignAddressRecoverer = evmPersonalSignAddressRecoverer;
     }
 
-    public void verifyRetrieveSecretSignature(
-            String secretId,
-            String userAddress,
-            String nonce,
-            String walletSignature
-    ) {
-        validateInputs(userAddress, nonce, walletSignature);
+    public void verifyRetrieveSecretSignature(RetrieveSecretShareCommand command) {
+        validateInputs(command.userAddress(), command.nonce(), command.walletSignature());
 
         String message = new RetrieveSecretShareSignatureChallenge(
-                secretId,
-                userAddress,
-                nonce
+                command.secretId(),
+                command.userAddress(),
+                command.readerPublicKey(),
+                command.nonce()
         ).message();
 
-        String recoveredAddress = evmPersonalSignAddressRecoverer.recoverAddress(message, walletSignature);
+        String recoveredAddress = evmPersonalSignAddressRecoverer.recoverAddress(message, command.walletSignature());
 
-        if (!recoveredAddress.equalsIgnoreCase(userAddress)) {
+        if (!recoveredAddress.equalsIgnoreCase(command.userAddress())) {
             throw new InvalidWalletSignatureException(
                     INVALID_WALLET_SIGNATURE,
                     "Wallet signature does not match user address"

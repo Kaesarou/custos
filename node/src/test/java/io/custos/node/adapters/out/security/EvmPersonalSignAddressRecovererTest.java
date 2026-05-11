@@ -15,23 +15,36 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class EvmPersonalSignAddressRecovererTest {
 
+    private static final String ALICE_ADDRESS = "0x70997970C51812dc3A010C7d01b50e0d17dc79C8";
+
+    private static final String BOB_ADDRESS = "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC";
+
+    private static final String READER_PUBLIC_KEY = "y5VMaQ_llLbDlKwKwV0au2VWPiijb125n_fvOSoS61o";
+
+    private static final String VALID_RETRIEVE_SIGNATURE_WITH_READER_PUBLIC_KEY =
+            "0x22965675a0fc18c4f9b7ac04b6d4621ab690be18c00d85018162a0d36a0a0fd849b0a56467e8cdb6bbb178ae227458e25a3aeb3e52a0fffe277b142931f968211c";
+
+    private static final String VALID_STORE_SIGNATURE =
+            "0xda63e0b40990ee76ea8d76a5707f6014077826b581f3a387110310cee9c71a3073da1c1576e16ab64154e46afc35f804e8487950153eaf15be461d38c75e6b571c";
+
     private final EvmPersonalSignAddressRecoverer recoverer = new EvmPersonalSignAddressRecoverer();
+
     @Test
     void shouldRecoverSignerAddressFromValidPersonalSignSignature() {
-
         String message = new RetrieveSecretShareSignatureChallenge(
                 "1",
-                "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+                ALICE_ADDRESS,
+                READER_PUBLIC_KEY,
                 "test-nonce-1234"
         ).message();
 
         String recoveredAddress = recoverer.recoverAddress(
                 message,
-                "0x825415a329279b10c39560d83fca7aeb2f93e311bb1478c5d6560767dbc5b1496735e96af0c5b1ac844e792dd54a226496725fe1fc41630e17b670978eb875fe1b"
+                VALID_RETRIEVE_SIGNATURE_WITH_READER_PUBLIC_KEY
         );
 
         Assertions.assertEquals(
-                "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
+                ALICE_ADDRESS.toLowerCase(),
                 recoveredAddress.toLowerCase()
         );
     }
@@ -44,17 +57,15 @@ class EvmPersonalSignAddressRecovererTest {
 
         String message = new StoreSecretShareSignatureChallenge(
                 "1",
-                "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC",
+                BOB_ADDRESS,
                 hash(encryptedShare),
                 hash(canonicalPolicy)
         ).message();
 
-        String publisherSignature = "0xda63e0b40990ee76ea8d76a5707f6014077826b581f3a387110310cee9c71a3073da1c1576e16ab64154e46afc35f804e8487950153eaf15be461d38c75e6b571c";
-
-        String recoveredAddress = recoverer.recoverAddress(message, publisherSignature);
+        String recoveredAddress = recoverer.recoverAddress(message, VALID_STORE_SIGNATURE);
 
         assertEquals(
-                "0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc",
+                BOB_ADDRESS.toLowerCase(),
                 recoveredAddress.toLowerCase()
         );
     }

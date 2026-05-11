@@ -9,6 +9,7 @@ import io.custos.node.core.application.port.out.SecretShareRepository;
 import io.custos.node.core.application.port.out.ShareProtectionService;
 import io.custos.node.core.application.port.out.WalletSignatureVerifier;
 import io.custos.node.core.domain.PolicyValidationResult;
+import io.custos.node.core.domain.model.ProtectedShare;
 import io.custos.node.core.domain.model.SecretShareDelivery;
 import io.custos.node.core.domain.model.StoredSecretShare;
 
@@ -46,8 +47,7 @@ public class RetrieveSecretShareService implements RetrieveSecretShareUseCase {
     @Override
     public SecretShareDelivery retrieve(RetrieveSecretShareCommand command) {
 
-        walletSignatureVerifier.verifyRetrieveSecretSignature(command.secretId(), command.userAddress(),
-                command.nonce(), command.walletSignature());
+        walletSignatureVerifier.verifyRetrieveSecretSignature(command);
 
         walletNonceService.markNonceAsUsed(command.userAddress(), command.secretId(), command.nonce());
 
@@ -61,11 +61,31 @@ public class RetrieveSecretShareService implements RetrieveSecretShareUseCase {
                     policyValidationResult.reason());
         }
 
-        String protectedShare = shareProtectionService.protect(stored.encryptedShare(), command.readerPublicKey());
+        ProtectedShare protectedShare = shareProtectionService.protect(
+                stored.encryptedShare(),
+                command.readerPublicKey()
+        );
 
-        String payloadToSign = command.secretId() + ":" + command.userAddress() + ":" + protectedShare;
+        String payloadToSign = deliveryPayloadToSign(command, protectedShare);
         String nodeSignature = nodeSignatureService.sign(payloadToSign);
 
         return new SecretShareDelivery(command.secretId(), nodeId, protectedShare, nodeSignature, Instant.now(clock));
+    }
+
+    private String deliveryPayloadToSign(
+            RetrieveSecretShareCommand command,
+            ProtectedShare protectedShare
+    ) {
+        return command.secretId()
+                + ":"
+                + command.userAddress().toLowerCase()
+                + ":"
+                + protectedShare.alg()
+                + ":"
+                + protectedShare.ephemeralPublicKey()
+                + ":"
+                + protectedShare.iv()
+                + ":"
+                + protectedShare.ciphertext();
     }
 }

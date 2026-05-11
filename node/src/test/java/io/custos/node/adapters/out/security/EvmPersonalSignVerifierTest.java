@@ -1,6 +1,7 @@
 package io.custos.node.adapters.out.security;
 
 import io.custos.node.core.application.exception.InvalidWalletSignatureException;
+import io.custos.node.core.application.port.in.command.RetrieveSecretShareCommand;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -12,10 +13,13 @@ class EvmPersonalSignVerifierTest {
     @Test
     void shouldAcceptValidPersonalSignSignature() {
         verifier.verifyRetrieveSecretSignature(
-                "1",
-                "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
-                "test-nonce-1234",
-                "0x825415a329279b10c39560d83fca7aeb2f93e311bb1478c5d6560767dbc5b1496735e96af0c5b1ac844e792dd54a226496725fe1fc41630e17b670978eb875fe1b"
+                new RetrieveSecretShareCommand(
+                        "1",
+                        "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+                        "0x22965675a0fc18c4f9b7ac04b6d4621ab690be18c00d85018162a0d36a0a0fd849b0a56467e8cdb6bbb178ae227458e25a3aeb3e52a0fffe277b142931f968211c",
+                        "y5VMaQ_llLbDlKwKwV0au2VWPiijb125n_fvOSoS61o",
+                        "test-nonce-1234"
+                )
         );
     }
 
@@ -23,10 +27,13 @@ class EvmPersonalSignVerifierTest {
     void shouldRejectSignatureWhenUserAddressDoesNotMatchRecoveredAddress() {
         assertThrows(InvalidWalletSignatureException.class, () ->
                 verifier.verifyRetrieveSecretSignature(
-                        "1",
-                        "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC",
-                        "test-nonce-1234",
-                        "0x2eaae67211205e5ad48847d3a64251b2ec1d0b3bedee679a468127aa842aa8400c4ef9939ec8c628fbe9d240255d411532baed6e76a2c2e99d92d166cb3cfbb71c"
+                        new RetrieveSecretShareCommand(
+                                "1",
+                                "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC",
+                                "0x22965675a0fc18c4f9b7ac04b6d4621ab690be18c00d85018162a0d36a0a0fd849b0a56467e8cdb6bbb178ae227458e25a3aeb3e52a0fffe277b142931f968211c",
+                                "y5VMaQ_llLbDlKwKwV0au2VWPiijb125n_fvOSoS61o",
+                                "test-nonce-1234"
+                        )
                 )
         );
     }
@@ -35,11 +42,13 @@ class EvmPersonalSignVerifierTest {
     void shouldRejectSignatureWhenNonceChanges() {
         assertThrows(InvalidWalletSignatureException.class, () ->
                 verifier.verifyRetrieveSecretSignature(
-                        "1",
-                        "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
-                        "another-nonce",
-                        "0x2eaae67211205e5ad48847d3a64251b2ec1d0b3bedee679a468127aa842aa8400c4ef9939ec8c628fbe9d240255d411532baed6e76a2c2e99d92d166cb3cfbb71c"
-                )
+                        new RetrieveSecretShareCommand(
+                                "1",
+                                "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+                                "0x22965675a0fc18c4f9b7ac04b6d4621ab690be18c00d85018162a0d36a0a0fd849b0a56467e8cdb6bbb178ae227458e25a3aeb3e52a0fffe277b142931f968211c",
+                                "y5VMaQ_llLbDlKwKwV0au2VWPiijb125n_fvOSoS61o",
+                                "another-nonce"
+                        ))
         );
     }
 
@@ -47,11 +56,13 @@ class EvmPersonalSignVerifierTest {
     void shouldRejectInvalidAddress() {
         assertThrows(InvalidWalletSignatureException.class, () ->
                 verifier.verifyRetrieveSecretSignature(
-                        "1",
-                        "invalid-address",
-                        "test-nonce-1234",
-                        "0x2eaae67211205e5ad48847d3a64251b2ec1d0b3bedee679a468127aa842aa8400c4ef9939ec8c628fbe9d240255d411532baed6e76a2c2e99d92d166cb3cfbb71c"
-                )
+                        new RetrieveSecretShareCommand(
+                                "1",
+                                "invalid-address",
+                                "0x22965675a0fc18c4f9b7ac04b6d4621ab690be18c00d85018162a0d36a0a0fd849b0a56467e8cdb6bbb178ae227458e25a3aeb3e52a0fffe277b142931f968211c",
+                                "y5VMaQ_llLbDlKwKwV0au2VWPiijb125n_fvOSoS61o",
+                                "test-nonce-1234"
+                        ))
         );
     }
 
@@ -59,11 +70,13 @@ class EvmPersonalSignVerifierTest {
     void shouldRejectBlankNonce() {
         assertThrows(InvalidWalletSignatureException.class, () ->
                 verifier.verifyRetrieveSecretSignature(
-                        "1",
-                        "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
-                        " ",
-                        "0x2eaae67211205e5ad48847d3a64251b2ec1d0b3bedee679a468127aa842aa8400c4ef9939ec8c628fbe9d240255d411532baed6e76a2c2e99d92d166cb3cfbb71c"
-                )
+                        new RetrieveSecretShareCommand(
+                                "1",
+                                "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+                                "0x22965675a0fc18c4f9b7ac04b6d4621ab690be18c00d85018162a0d36a0a0fd849b0a56467e8cdb6bbb178ae227458e25a3aeb3e52a0fffe277b142931f968211c",
+                                "y5VMaQ_llLbDlKwKwV0au2VWPiijb125n_fvOSoS61o",
+                                " "
+                        ))
         );
     }
 }

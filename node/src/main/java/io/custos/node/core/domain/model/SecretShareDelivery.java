@@ -5,7 +5,7 @@ import java.time.Instant;
 public record SecretShareDelivery(
         String secretId,
         String nodeId,
-        String protectedShare,
+        ProtectedShare protectedShare,
         String nodeSignature,
         Instant deliveredAt
 ) {
