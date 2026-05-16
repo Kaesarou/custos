@@ -5,6 +5,7 @@ import io.custos.node.core.application.exception.SecretShareNotFoundException;
 import io.custos.node.core.application.port.in.command.RetrieveSecretShareCommand;
 import io.custos.node.core.application.port.out.*;
 import io.custos.node.core.domain.PolicyValidationResult;
+import io.custos.node.core.domain.ShareProtectionAlgorithm;
 import io.custos.node.core.domain.model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

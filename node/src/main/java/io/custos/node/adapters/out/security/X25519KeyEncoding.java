@@ -42,32 +42,4 @@ final class X25519KeyEncoding {
 
         return encoded;
     }
-
-    static byte[] normalizeRawPublicKey(byte[] value) {
-        if (value.length == RAW_X25519_PUBLIC_KEY_LENGTH_BYTES) {
-            return value;
-        }
-
-        byte[] normalized = new byte[RAW_X25519_PUBLIC_KEY_LENGTH_BYTES];
-
-        if (value.length > RAW_X25519_PUBLIC_KEY_LENGTH_BYTES) {
-            System.arraycopy(
-                    value,
-                    value.length - RAW_X25519_PUBLIC_KEY_LENGTH_BYTES,
-                    normalized,
-                    0,
-                    RAW_X25519_PUBLIC_KEY_LENGTH_BYTES
-            );
-        } else {
-            System.arraycopy(
-                    value,
-                    0,
-                    normalized,
-                    RAW_X25519_PUBLIC_KEY_LENGTH_BYTES - value.length,
-                    value.length
-            );
-        }
-
-        return normalized;
-    }
 }

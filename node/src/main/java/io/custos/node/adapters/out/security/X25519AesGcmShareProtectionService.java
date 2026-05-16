@@ -3,8 +3,8 @@ package io.custos.node.adapters.out.security;
 import io.custos.node.core.application.exception.InvalidReaderPublicKeyException;
 import io.custos.node.core.application.exception.ShareProtectionException;
 import io.custos.node.core.application.port.out.ShareProtectionService;
+import io.custos.node.core.domain.ShareProtectionAlgorithm;
 import io.custos.node.core.domain.model.ProtectedShare;
-import io.custos.node.core.domain.model.ShareProtectionAlgorithm;
 import org.bouncycastle.crypto.digests.SHA256Digest;
 import org.bouncycastle.crypto.generators.HKDFBytesGenerator;
 import org.bouncycastle.crypto.params.HKDFParameters;
@@ -18,10 +18,11 @@ import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.KeyPairGenerator;
+import java.security.PublicKey;
 import java.security.SecureRandom;
-import java.security.interfaces.XECPublicKey;
 import java.security.spec.NamedParameterSpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.Arrays;
 
 import static io.custos.node.core.application.exception.errorcode.ShareProtectionErrorCode.INVALID_READER_PUBLIC_KEY;
 import static io.custos.node.core.application.exception.errorcode.ShareProtectionErrorCode.SHARE_PROTECTION_FAILED;
@@ -152,20 +153,13 @@ public class X25519AesGcmShareProtectionService implements ShareProtectionServic
         return bytes;
     }
 
-    private byte[] rawX25519PublicKey(java.security.PublicKey publicKey) {
-        if (publicKey instanceof XECPublicKey xecPublicKey) {
-            byte[] raw = xecPublicKey.getU().toByteArray();
+    private byte[] rawX25519PublicKey(PublicKey publicKey) {
+        byte[] encoded = publicKey.getEncoded();
 
-            /*
-             * BigInteger.toByteArray() may add a sign byte or return fewer bytes.
-             * X25519 raw public keys must be exactly 32 bytes little-endian-ish encoded by provider.
-             *
-             * If this causes trouble with your provider, use encoded X.509 form instead
-             * for ephemeralPublicKey. For now, we normalize to 32 bytes.
-             */
-            return X25519KeyEncoding.normalizeRawPublicKey(raw);
-        }
-
-        throw new IllegalStateException("Unsupported X25519 public key type");
+        return Arrays.copyOfRange(
+                encoded,
+                encoded.length - RAW_X25519_PUBLIC_KEY_LENGTH_BYTES,
+                encoded.length
+        );
     }
 }

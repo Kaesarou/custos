@@ -4,7 +4,7 @@ import io.custos.node.core.application.port.in.RetrieveSecretShareUseCase;
 import io.custos.node.core.application.port.in.StoreSecretShareUseCase;
 import io.custos.node.core.domain.model.ProtectedShare;
 import io.custos.node.core.domain.model.SecretShareDelivery;
-import io.custos.node.core.domain.model.ShareProtectionAlgorithm;
+import io.custos.node.core.domain.ShareProtectionAlgorithm;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -67,7 +67,7 @@ class SecretShareControllerWebMvcTest {
     @Test
     void shouldMapRetrieveRequestToRetrieveCommand() throws Exception {
         ProtectedShare protectedShare = new ProtectedShare(
-                io.custos.node.core.domain.model.ShareProtectionAlgorithm.X25519_HKDF_SHA256_AES_256_GCM,
+                ShareProtectionAlgorithm.X25519_HKDF_SHA256_AES_256_GCM,
                 "ephemeral-public-key",
                 "iv",
                 "ciphertext"

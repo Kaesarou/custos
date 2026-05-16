@@ -1,4 +1,4 @@
-package io.custos.node.core.domain.model;
+package io.custos.node.core.domain;
 
 public final class ShareProtectionAlgorithm {
 
