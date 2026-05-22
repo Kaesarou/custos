@@ -1,8 +1,6 @@
 package io.custos.node.config;
 
-import io.custos.node.core.application.port.in.GetNodeIdentityUseCase;
-import io.custos.node.core.application.port.in.RetrieveSecretShareUseCase;
-import io.custos.node.core.application.port.in.StoreSecretShareUseCase;
+import io.custos.node.core.application.port.in.*;
 import io.custos.node.core.application.port.out.*;
 import io.custos.node.core.application.service.*;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -10,11 +8,17 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.time.Clock;
+import java.time.Instant;
 import java.util.List;
 
 @Configuration
 @EnableConfigurationProperties(CustosProperties.class)
 public class ApplicationConfig {
+
+    @Bean
+    public Instant nodeStartedAt() {
+        return Instant.now();
+    }
 
     @Bean
     Clock clock() {
@@ -68,5 +72,25 @@ public class ApplicationConfig {
             NodeIdentityProvider nodeIdentityProvider
     ) {
         return new GetNodeIdentityService(nodeIdentityProvider);
+    }
+
+    @Bean
+    public GetNodeStatusUseCase getNodeStatusUseCase(
+            CustosProperties custosProperties,
+            Clock clock,
+            Instant nodeStartedAt
+    ) {
+        return new GetNodeStatusService(
+                custosProperties,
+                clock,
+                nodeStartedAt
+        );
+    }
+
+    @Bean
+    public GetNodeCapabilitiesUseCase getNodeCapabilitiesUseCase(
+            CustosProperties custosProperties
+    ) {
+        return new GetNodeCapabilitiesService(custosProperties);
     }
 }

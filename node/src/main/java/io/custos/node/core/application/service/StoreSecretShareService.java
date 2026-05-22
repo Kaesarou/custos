@@ -1,6 +1,5 @@
 package io.custos.node.core.application.service;
 
-import io.custos.node.core.application.exception.InvalidPublisherSignatureException;
 import io.custos.node.core.application.port.in.StoreSecretShareUseCase;
 import io.custos.node.core.application.port.in.command.StoreSecretShareCommand;
 import io.custos.node.core.application.port.out.PublisherSignatureVerifier;
