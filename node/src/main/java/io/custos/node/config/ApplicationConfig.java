@@ -1,12 +1,10 @@
 package io.custos.node.config;
 
+import io.custos.node.core.application.port.in.GetNodeIdentityUseCase;
 import io.custos.node.core.application.port.in.RetrieveSecretShareUseCase;
 import io.custos.node.core.application.port.in.StoreSecretShareUseCase;
 import io.custos.node.core.application.port.out.*;
-import io.custos.node.core.application.service.PolicyValidationService;
-import io.custos.node.core.application.service.RetrieveSecretShareService;
-import io.custos.node.core.application.service.StoreSecretShareService;
-import io.custos.node.core.application.service.WalletNonceService;
+import io.custos.node.core.application.service.*;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -54,7 +52,7 @@ public class ApplicationConfig {
             NodeSignatureService nodeSignatureService
     ) {
         return new RetrieveSecretShareService(
-                custosProperties.nodeId(),
+                custosProperties.node().id(),
                 clock,
                 repository,
                 walletSignatureVerifier,
@@ -63,5 +61,12 @@ public class ApplicationConfig {
                 shareProtectionService,
                 nodeSignatureService
         );
+    }
+
+    @Bean
+    public GetNodeIdentityUseCase getNodeIdentityUseCase(
+            NodeIdentityProvider nodeIdentityProvider
+    ) {
+        return new GetNodeIdentityService(nodeIdentityProvider);
     }
 }

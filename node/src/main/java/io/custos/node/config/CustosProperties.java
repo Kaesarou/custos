@@ -6,9 +6,16 @@ import java.util.Map;
 
 @ConfigurationProperties(prefix = "custos")
 public record CustosProperties(
-        String nodeId,
+        NodeConfig node,
         Map<Long, ChainConfig> chains
 ) {
+    public record NodeConfig(
+            String id,
+            String privateKey,
+            String rewardAddress
+    ) {
+    }
+
     public record ChainConfig(
             String rpcUrl
     ) {

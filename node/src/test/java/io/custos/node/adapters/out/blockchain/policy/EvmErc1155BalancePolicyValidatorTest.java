@@ -256,7 +256,11 @@ class EvmErc1155BalancePolicyValidatorTest {
 
     private CustosProperties custosPropertiesWithConfiguredChain() {
         return new CustosProperties(
-                "local-node-1",
+                new CustosProperties.NodeConfig(
+                        "local-node-1",
+                        "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80",
+                        "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+                ),
                 Map.of(
                         CHAIN_ID,
                         new CustosProperties.ChainConfig(RPC_URL)
@@ -266,7 +270,11 @@ class EvmErc1155BalancePolicyValidatorTest {
 
     private CustosProperties custosPropertiesWithoutConfiguredChains() {
         return new CustosProperties(
-                "local-node-1",
+                new CustosProperties.NodeConfig(
+                        "local-node-1",
+                        "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80",
+                        "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+                ),
                 Map.of()
         );
     }
