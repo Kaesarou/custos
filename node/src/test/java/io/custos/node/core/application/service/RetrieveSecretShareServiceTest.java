@@ -5,6 +5,7 @@ import io.custos.node.core.application.exception.SecretShareNotFoundException;
 import io.custos.node.core.application.port.in.command.RetrieveSecretShareCommand;
 import io.custos.node.core.application.port.out.*;
 import io.custos.node.core.domain.PolicyValidationResult;
+import io.custos.node.core.domain.SecretShareDeliverySignatureChallenge;
 import io.custos.node.core.domain.ShareProtectionAlgorithm;
 import io.custos.node.core.domain.model.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -86,7 +87,13 @@ class RetrieveSecretShareServiceTest {
 
         ProtectedShare protectedShare = validProtectedShare();
 
-        String payloadToSign = expectedPayloadToSign(command, protectedShare);
+        String payloadToSign = new SecretShareDeliverySignatureChallenge(
+                command.secretId(),
+                command.userAddress(),
+                NODE_ID,
+                protectedShare,
+                NOW
+        ).message();
 
         when(repository.findBySecretId(SECRET_ID)).thenReturn(Optional.of(stored));
         when(evmErc1155BalancePolicyValidator.validate(policy, command.userAddress()))
@@ -207,22 +214,5 @@ class RetrieveSecretShareServiceTest {
                 "iv",
                 "ciphertext"
         );
-    }
-
-    private String expectedPayloadToSign(
-            RetrieveSecretShareCommand command,
-            ProtectedShare protectedShare
-    ) {
-        return command.secretId()
-                + ":"
-                + command.userAddress().toLowerCase()
-                + ":"
-                + protectedShare.alg()
-                + ":"
-                + protectedShare.ephemeralPublicKey()
-                + ":"
-                + protectedShare.iv()
-                + ":"
-                + protectedShare.ciphertext();
     }
 }

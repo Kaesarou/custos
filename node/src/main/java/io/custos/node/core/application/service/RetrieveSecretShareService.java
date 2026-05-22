@@ -9,6 +9,7 @@ import io.custos.node.core.application.port.out.SecretShareRepository;
 import io.custos.node.core.application.port.out.ShareProtectionService;
 import io.custos.node.core.application.port.out.WalletSignatureVerifier;
 import io.custos.node.core.domain.PolicyValidationResult;
+import io.custos.node.core.domain.SecretShareDeliverySignatureChallenge;
 import io.custos.node.core.domain.model.ProtectedShare;
 import io.custos.node.core.domain.model.SecretShareDelivery;
 import io.custos.node.core.domain.model.StoredSecretShare;
@@ -66,26 +67,24 @@ public class RetrieveSecretShareService implements RetrieveSecretShareUseCase {
                 command.readerPublicKey()
         );
 
-        String payloadToSign = deliveryPayloadToSign(command, protectedShare);
+        Instant deliveredAt = Instant.now(clock);
+
+        String payloadToSign = new SecretShareDeliverySignatureChallenge(
+                command.secretId(),
+                command.userAddress(),
+                nodeId,
+                protectedShare,
+                deliveredAt
+        ).message();
+
         String nodeSignature = nodeSignatureService.sign(payloadToSign);
 
-        return new SecretShareDelivery(command.secretId(), nodeId, protectedShare, nodeSignature, Instant.now(clock));
-    }
-
-    private String deliveryPayloadToSign(
-            RetrieveSecretShareCommand command,
-            ProtectedShare protectedShare
-    ) {
-        return command.secretId()
-                + ":"
-                + command.userAddress().toLowerCase()
-                + ":"
-                + protectedShare.alg()
-                + ":"
-                + protectedShare.ephemeralPublicKey()
-                + ":"
-                + protectedShare.iv()
-                + ":"
-                + protectedShare.ciphertext();
+        return new SecretShareDelivery(
+                command.secretId(),
+                nodeId,
+                protectedShare,
+                nodeSignature,
+                deliveredAt
+        );
     }
 }
