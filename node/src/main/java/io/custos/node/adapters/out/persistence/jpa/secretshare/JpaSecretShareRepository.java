@@ -25,4 +25,9 @@ public class JpaSecretShareRepository implements SecretShareRepository {
         return repository.findById(secretId)
                 .map(SecretShareJpaMapper::toDomain);
     }
+
+    @Override
+    public boolean existsBySecretId(String secretId) {
+        return repository.existsById(secretId);
+    }
 }

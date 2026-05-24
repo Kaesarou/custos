@@ -1,49 +1,35 @@
 package io.custos.node.core.application.service;
 
-import io.custos.node.config.CustosProperties;
+import io.custos.node.core.application.port.out.NodeStatusProvider;
 import io.custos.node.core.domain.model.NodeStatus;
 import org.junit.jupiter.api.Test;
 
-import java.time.Clock;
 import java.time.Instant;
-import java.time.ZoneOffset;
-import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
 
 class GetNodeStatusServiceTest {
 
     @Test
-    void shouldReturnNodeStatus() {
-        CustosProperties properties = new CustosProperties(
-                new CustosProperties.NodeConfig(
-                        "local-node-1",
-                        "0xprivate-key",
-                        "",
-                        List.of()
-                ),
-                Map.of()
-        );
+    void shouldReturnNodeStatusFromProvider() {
+        NodeStatusProvider provider = mock(NodeStatusProvider.class);
 
-        Instant startedAt = Instant.parse("2026-05-22T10:00:00Z");
-        Clock clock = Clock.fixed(
+        NodeStatus expected = new NodeStatus(
+                "local-node-1",
+                "UP",
+                Instant.parse("2026-05-22T10:00:00Z"),
                 Instant.parse("2026-05-22T10:15:00Z"),
-                ZoneOffset.UTC
+                900
         );
 
-        GetNodeStatusService service = new GetNodeStatusService(
-                properties,
-                clock,
-                startedAt
-        );
+        when(provider.getNodeStatus()).thenReturn(expected);
 
-        NodeStatus status = service.getNodeStatus();
+        GetNodeStatusService service = new GetNodeStatusService(provider);
 
-        assertEquals("local-node-1", status.nodeId());
-        assertEquals("UP", status.status());
-        assertEquals(Instant.parse("2026-05-22T10:00:00Z"), status.startedAt());
-        assertEquals(Instant.parse("2026-05-22T10:15:00Z"), status.currentTime());
-        assertEquals(900, status.uptimeSeconds());
+        NodeStatus result = service.getNodeStatus();
+
+        assertEquals(expected, result);
+        verify(provider).getNodeStatus();
     }
 }

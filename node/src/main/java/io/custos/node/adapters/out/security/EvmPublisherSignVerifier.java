@@ -32,6 +32,13 @@ public class EvmPublisherSignVerifier implements PublisherSignatureVerifier {
             );
         }
 
+        if (command.publisherSignature() == null || command.publisherSignature().isBlank()) {
+            throw new InvalidPublisherSignatureException(
+                    INVALID_WALLET_SIGNATURE,
+                    "Publisher signature is required"
+            );
+        }
+
         String message = new StoreSecretShareSignatureChallenge(
                 command.secretId(),
                 command.publisherAddress(),

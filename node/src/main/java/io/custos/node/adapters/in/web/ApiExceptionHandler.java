@@ -29,9 +29,24 @@ public class ApiExceptionHandler {
         return response(HttpStatus.FORBIDDEN, ex.getMessage());
     }
 
+    @ExceptionHandler(InvalidReaderPublicKeyException.class)
+    public ResponseEntity<Map<String, Object>> handleInvalidReaderPublicKey(InvalidReaderPublicKeyException ex) {
+        return response(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
+    @ExceptionHandler(ShareProtectionException.class)
+    public ResponseEntity<Map<String, Object>> handleShareProtection(ShareProtectionException ex) {
+        return response(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to protect secret share");
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleValidation(MethodArgumentNotValidException ex) {
         return response(HttpStatus.BAD_REQUEST, "Invalid request payload");
+    }
+
+    @ExceptionHandler(SecretShareAlreadyExistsException.class)
+    public ResponseEntity<Map<String, Object>> handleConflict(SecretShareAlreadyExistsException ex) {
+        return response(HttpStatus.CONFLICT, ex.getMessage());
     }
 
     private ResponseEntity<Map<String, Object>> response(HttpStatus status, String message) {

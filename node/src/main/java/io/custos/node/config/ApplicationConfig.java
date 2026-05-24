@@ -76,22 +76,16 @@ public class ApplicationConfig {
 
     @Bean
     public GetNodeStatusUseCase getNodeStatusUseCase(
-            CustosProperties custosProperties,
-            Clock clock,
-            Instant nodeStartedAt
+            NodeStatusProvider nodeStatusProvider
     ) {
-        return new GetNodeStatusService(
-                custosProperties,
-                clock,
-                nodeStartedAt
-        );
+        return new GetNodeStatusService(nodeStatusProvider);
     }
 
     @Bean
     public GetNodeCapabilitiesUseCase getNodeCapabilitiesUseCase(
-            CustosProperties custosProperties
+            NodeCapabilitiesProvider nodeCapabilitiesProvider
     ) {
-        return new GetNodeCapabilitiesService(custosProperties);
+        return new GetNodeCapabilitiesService(nodeCapabilitiesProvider);
     }
 
     @Bean

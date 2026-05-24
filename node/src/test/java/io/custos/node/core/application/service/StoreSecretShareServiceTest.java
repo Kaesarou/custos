@@ -1,6 +1,7 @@
 package io.custos.node.core.application.service;
 
 import io.custos.node.core.application.exception.InvalidPublisherSignatureException;
+import io.custos.node.core.application.exception.SecretShareAlreadyExistsException;
 import io.custos.node.core.application.exception.errorcode.WalletSignatureErrorCode;
 import io.custos.node.core.application.port.in.command.StoreSecretShareCommand;
 import io.custos.node.core.application.port.out.PublisherSignatureVerifier;
@@ -32,6 +33,8 @@ class StoreSecretShareServiceTest {
     void setUp() {
         repository = mock(SecretShareRepository.class);
         publisherSignatureVerifier = mock(PublisherSignatureVerifier.class);
+
+        when(repository.existsBySecretId("1")).thenReturn(false);
 
         service = new StoreSecretShareService(
                 CLOCK,
@@ -86,6 +89,21 @@ class StoreSecretShareServiceTest {
         InOrder inOrder = inOrder(verifier, repository);
         inOrder.verify(verifier).verifyStoreSecretSignature(command);
         inOrder.verify(repository).save(any(StoredSecretShare.class));
+    }
+
+    @Test
+    void shouldRejectStoreWhenSecretShareAlreadyExists() {
+        StoreSecretShareCommand command = validCommand();
+
+        when(repository.existsBySecretId("1")).thenReturn(true);
+
+        assertThrows(
+                SecretShareAlreadyExistsException.class,
+                () -> service.store(command)
+        );
+
+        verify(publisherSignatureVerifier).verifyStoreSecretSignature(command);
+        verify(repository, never()).save(any());
     }
 
     private StoreSecretShareCommand validCommand() {

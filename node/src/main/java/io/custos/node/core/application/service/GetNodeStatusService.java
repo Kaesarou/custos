@@ -1,39 +1,19 @@
 package io.custos.node.core.application.service;
 
-import io.custos.node.config.CustosProperties;
 import io.custos.node.core.application.port.in.GetNodeStatusUseCase;
+import io.custos.node.core.application.port.out.NodeStatusProvider;
 import io.custos.node.core.domain.model.NodeStatus;
-
-import java.time.Clock;
-import java.time.Duration;
-import java.time.Instant;
 
 public class GetNodeStatusService implements GetNodeStatusUseCase {
 
-    private final CustosProperties custosProperties;
-    private final Clock clock;
-    private final Instant startedAt;
+    private final NodeStatusProvider nodeStatusProvider;
 
-    public GetNodeStatusService(
-            CustosProperties custosProperties,
-            Clock clock,
-            Instant startedAt
-    ) {
-        this.custosProperties = custosProperties;
-        this.clock = clock;
-        this.startedAt = startedAt;
+    public GetNodeStatusService(NodeStatusProvider nodeStatusProvider) {
+        this.nodeStatusProvider = nodeStatusProvider;
     }
 
     @Override
     public NodeStatus getNodeStatus() {
-        Instant currentTime = Instant.now(clock);
-
-        return new NodeStatus(
-                custosProperties.node().id(),
-                "UP",
-                startedAt,
-                currentTime,
-                Duration.between(startedAt, currentTime).toSeconds()
-        );
+        return nodeStatusProvider.getNodeStatus();
     }
 }

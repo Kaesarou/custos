@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ConfiguredNodePeerProviderTest {
 
@@ -79,5 +80,22 @@ class ConfiguredNodePeerProviderTest {
         assertEquals(2, result.peers().size());
         assertEquals("http://localhost:8082", result.peers().get(0).baseUrl());
         assertEquals("http://localhost:8083", result.peers().get(1).baseUrl());
+    }
+
+    @Test
+    void shouldRejectInvalidPeerBaseUrl() {
+        CustosProperties properties = new CustosProperties(
+                new CustosProperties.NodeConfig(
+                        "local-node-1",
+                        "0xprivate-key",
+                        "",
+                        List.of("banana")
+                ),
+                Map.of()
+        );
+
+        ConfiguredNodePeerProvider provider = new ConfiguredNodePeerProvider(properties);
+
+        assertThrows(IllegalStateException.class, provider::getNodePeers);
     }
 }

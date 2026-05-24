@@ -1,10 +1,12 @@
 package io.custos.node.adapters.in.web;
 
+import io.custos.node.core.application.exception.InvalidReaderPublicKeyException;
+import io.custos.node.core.application.exception.errorcode.ShareProtectionErrorCode;
 import io.custos.node.core.application.port.in.RetrieveSecretShareUseCase;
 import io.custos.node.core.application.port.in.StoreSecretShareUseCase;
+import io.custos.node.core.domain.ShareProtectionAlgorithm;
 import io.custos.node.core.domain.model.ProtectedShare;
 import io.custos.node.core.domain.model.SecretShareDelivery;
-import io.custos.node.core.domain.ShareProtectionAlgorithm;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -110,5 +112,29 @@ class SecretShareControllerWebMvcTest {
                         && command.readerPublicKey().equals("reader-public-key")
                         && command.nonce().equals("test-nonce-1234")
         ));
+    }
+
+    @Test
+    void shouldReturnBadRequestWhenReaderPublicKeyIsInvalid() throws Exception {
+        when(retrieveSecretShareUseCase.retrieve(any())).thenThrow(
+                new InvalidReaderPublicKeyException(
+                        ShareProtectionErrorCode.INVALID_READER_PUBLIC_KEY,
+                        "Invalid readerPublicKey"
+                )
+        );
+
+        mockMvc.perform(post("/api/v1/secret-shares/1/retrieve")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "userAddress": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+                                  "walletSignature": "0xsignature",
+                                  "readerPublicKey": "invalid",
+                                  "nonce": "nonce-1"
+                                }
+                                """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.message").value("Invalid readerPublicKey"));
     }
 }

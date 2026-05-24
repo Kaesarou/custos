@@ -8,4 +8,6 @@ public interface SecretShareRepository {
     void save(StoredSecretShare storedSecretShare);
 
     Optional<StoredSecretShare> findBySecretId(String secretId);
+
+    boolean existsBySecretId(String secretId);
 }

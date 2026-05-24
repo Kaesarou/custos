@@ -1,5 +1,6 @@
 package io.custos.node.core.application.service;
 
+import io.custos.node.core.application.exception.SecretShareAlreadyExistsException;
 import io.custos.node.core.application.port.in.StoreSecretShareUseCase;
 import io.custos.node.core.application.port.in.command.StoreSecretShareCommand;
 import io.custos.node.core.application.port.out.PublisherSignatureVerifier;
@@ -29,6 +30,10 @@ public class StoreSecretShareService implements StoreSecretShareUseCase {
     public void store(StoreSecretShareCommand command) {
 
         this.publisherSignatureVerifier.verifyStoreSecretSignature(command);
+
+        if (repository.existsBySecretId(command.secretId())) {
+            throw new SecretShareAlreadyExistsException(command.secretId());
+        }
 
         repository.save(new StoredSecretShare(
                 command.secretId(),
