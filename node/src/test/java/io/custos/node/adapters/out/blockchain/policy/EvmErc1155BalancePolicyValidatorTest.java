@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigInteger;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -259,7 +260,8 @@ class EvmErc1155BalancePolicyValidatorTest {
                 new CustosProperties.NodeConfig(
                         "local-node-1",
                         "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80",
-                        "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+                        "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+                        List.of()
                 ),
                 Map.of(
                         CHAIN_ID,
@@ -273,7 +275,8 @@ class EvmErc1155BalancePolicyValidatorTest {
                 new CustosProperties.NodeConfig(
                         "local-node-1",
                         "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80",
-                        "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+                        "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+                        List.of()
                 ),
                 Map.of()
         );

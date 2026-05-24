@@ -2,6 +2,7 @@ package io.custos.node.adapters.in.web;
 
 import io.custos.node.core.application.port.in.GetNodeCapabilitiesUseCase;
 import io.custos.node.core.application.port.in.GetNodeIdentityUseCase;
+import io.custos.node.core.application.port.in.GetNodePeersUseCase;
 import io.custos.node.core.application.port.in.GetNodeStatusUseCase;
 import io.custos.node.core.domain.ShareProtectionAlgorithm;
 import io.custos.node.core.domain.model.*;
@@ -33,6 +34,9 @@ class NodeControllerWebMvcTest {
 
     @MockBean
     private GetNodeCapabilitiesUseCase getNodeCapabilitiesUseCase;
+
+    @MockBean
+    private GetNodePeersUseCase getNodePeersUseCase;
 
     @Test
     void shouldReturnNodeIdentity() throws Exception {
@@ -93,5 +97,24 @@ class NodeControllerWebMvcTest {
                 .andExpect(jsonPath("$.supportedShareProtectionAlgorithms[0]").value("X25519-HKDF-SHA256-AES-256-GCM"))
                 .andExpect(jsonPath("$.signatureAlgorithm").value(NodeSignatureAlgorithm.ECDSA_SECP256K1_PERSONAL_SIGN))
                 .andExpect(jsonPath("$.supportedChains[0].chainId").value(31337));
+    }
+
+    @Test
+    void shouldReturnNodePeers() throws Exception {
+        when(getNodePeersUseCase.getNodePeers()).thenReturn(
+                new NodePeers(
+                        "local-node-1",
+                        List.of(
+                                new NodePeers.Peer("http://localhost:8082"),
+                                new NodePeers.Peer("http://localhost:8083")
+                        )
+                )
+        );
+
+        mockMvc.perform(get("/api/v1/node/peers"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.nodeId").value("local-node-1"))
+                .andExpect(jsonPath("$.peers[0].baseUrl").value("http://localhost:8082"))
+                .andExpect(jsonPath("$.peers[1].baseUrl").value("http://localhost:8083"));
     }
 }

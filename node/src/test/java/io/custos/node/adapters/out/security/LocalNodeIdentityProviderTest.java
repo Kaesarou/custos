@@ -5,6 +5,7 @@ import io.custos.node.core.domain.model.NodeIdentity;
 import io.custos.node.core.domain.model.NodeSignatureAlgorithm;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -20,7 +21,8 @@ class LocalNodeIdentityProviderTest {
                 new CustosProperties.NodeConfig(
                         "local-node-1",
                         NODE_PRIVATE_KEY,
-                        ""
+                        "",
+                        List.of()
                 ),
                 Map.of()
         );
@@ -46,7 +48,8 @@ class LocalNodeIdentityProviderTest {
                 new CustosProperties.NodeConfig(
                         "local-node-1",
                         NODE_PRIVATE_KEY,
-                        coldRewardAddress
+                        coldRewardAddress,
+                        List.of()
                 ),
                 Map.of()
         );

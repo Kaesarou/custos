@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -19,7 +20,8 @@ class GetNodeStatusServiceTest {
                 new CustosProperties.NodeConfig(
                         "local-node-1",
                         "0xprivate-key",
-                        ""
+                        "",
+                        List.of()
                 ),
                 Map.of()
         );

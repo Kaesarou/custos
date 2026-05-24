@@ -93,4 +93,11 @@ public class ApplicationConfig {
     ) {
         return new GetNodeCapabilitiesService(custosProperties);
     }
+
+    @Bean
+    public GetNodePeersUseCase getNodePeersUseCase(
+            NodePeerProvider nodePeerProvider
+    ) {
+        return new GetNodePeersService(nodePeerProvider);
+    }
 }

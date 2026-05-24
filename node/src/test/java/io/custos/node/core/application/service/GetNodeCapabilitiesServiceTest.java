@@ -20,7 +20,8 @@ class GetNodeCapabilitiesServiceTest {
                 new CustosProperties.NodeConfig(
                         "local-node-1",
                         "0xprivate-key",
-                        ""
+                        "",
+                        List.of()
                 ),
                 Map.of(
                         31337L,

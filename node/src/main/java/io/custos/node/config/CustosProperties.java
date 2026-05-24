@@ -2,6 +2,7 @@ package io.custos.node.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.util.List;
 import java.util.Map;
 
 @ConfigurationProperties(prefix = "custos")
@@ -12,7 +13,8 @@ public record CustosProperties(
     public record NodeConfig(
             String id,
             String privateKey,
-            String rewardAddress
+            String rewardAddress,
+            List<String> peers
     ) {
     }
 
