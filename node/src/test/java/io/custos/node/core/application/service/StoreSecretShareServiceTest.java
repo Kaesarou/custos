@@ -75,7 +75,7 @@ class StoreSecretShareServiceTest {
     }
 
     @Test
-    void shouldVerifyPublisherSignatureBeforeSavingSecretShare() {
+    void shouldVerifyPublisherSignatureAndCheckExistenceBeforeSavingSecretShare() {
         SecretShareRepository repository = mock(SecretShareRepository.class);
         PublisherSignatureVerifier verifier = mock(PublisherSignatureVerifier.class);
         Clock clock = Clock.fixed(Instant.parse("2026-05-04T10:15:30Z"), ZoneOffset.UTC);
@@ -87,7 +87,9 @@ class StoreSecretShareServiceTest {
         service.store(command);
 
         InOrder inOrder = inOrder(verifier, repository);
+
         inOrder.verify(verifier).verifyStoreSecretSignature(command);
+        inOrder.verify(repository).existsBySecretId(command.secretId());
         inOrder.verify(repository).save(any(StoredSecretShare.class));
     }
 
