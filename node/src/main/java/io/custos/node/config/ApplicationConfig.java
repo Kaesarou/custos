@@ -6,6 +6,7 @@ import io.custos.node.core.application.service.*;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestClient;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -23,6 +24,11 @@ public class ApplicationConfig {
     @Bean
     Clock clock() {
         return Clock.systemUTC();
+    }
+
+    @Bean
+    public RestClient.Builder restClientBuilder() {
+        return RestClient.builder();
     }
 
     @Bean
@@ -93,5 +99,16 @@ public class ApplicationConfig {
             NodePeerProvider nodePeerProvider
     ) {
         return new GetNodePeersService(nodePeerProvider);
+    }
+
+    @Bean
+    public GetLocalNetworkViewUseCase getLocalNetworkViewUseCase(
+            NodePeerProvider nodePeerProvider,
+            PeerClient peerClient
+    ) {
+        return new GetLocalNetworkViewService(
+                nodePeerProvider,
+                peerClient
+        );
     }
 }
