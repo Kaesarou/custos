@@ -14,6 +14,7 @@ public record CustosProperties(
             String id,
             String privateKey,
             String rewardAddress,
+            String publicBaseUrl,
             List<String> peers
     ) {
     }

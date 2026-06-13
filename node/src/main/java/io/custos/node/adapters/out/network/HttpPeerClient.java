@@ -67,6 +67,7 @@ public class HttpPeerClient implements PeerClient {
                 response.nodeId(),
                 response.nodeAddress(),
                 response.rewardAddress(),
+                response.publicBaseUrl(),
                 response.signatureAlgorithm()
         );
     }

@@ -1,6 +1,8 @@
 package io.custos.node.adapters.out.config;
 
 import io.custos.node.config.CustosProperties;
+import io.custos.node.core.application.port.out.NodeIdentityProvider;
+import io.custos.node.core.domain.model.NodeIdentity;
 import io.custos.node.core.domain.model.NodePeers;
 import org.junit.jupiter.api.Test;
 
@@ -9,25 +11,24 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class ConfiguredNodePeerProviderTest {
 
     @Test
     void shouldReturnConfiguredPeers() {
-        CustosProperties properties = new CustosProperties(
-                new CustosProperties.NodeConfig(
-                        "local-node-1",
-                        "0xprivate-key",
-                        "",
-                        List.of(
-                                "http://localhost:8082",
-                                "http://localhost:8083"
-                        )
-                ),
-                Map.of()
+        CustosProperties properties = propertiesWithPeers(
+                List.of(
+                        "http://localhost:8082",
+                        "http://localhost:8083"
+                )
         );
 
-        ConfiguredNodePeerProvider provider = new ConfiguredNodePeerProvider(properties);
+        ConfiguredNodePeerProvider provider = new ConfiguredNodePeerProvider(
+                properties,
+                nodeIdentityProvider()
+        );
 
         NodePeers result = provider.getNodePeers();
 
@@ -39,17 +40,12 @@ class ConfiguredNodePeerProviderTest {
 
     @Test
     void shouldReturnEmptyPeersWhenNoPeerIsConfigured() {
-        CustosProperties properties = new CustosProperties(
-                new CustosProperties.NodeConfig(
-                        "local-node-1",
-                        "0xprivate-key",
-                        "",
-                        null
-                ),
-                Map.of()
-        );
+        CustosProperties properties = propertiesWithPeers(null);
 
-        ConfiguredNodePeerProvider provider = new ConfiguredNodePeerProvider(properties);
+        ConfiguredNodePeerProvider provider = new ConfiguredNodePeerProvider(
+                properties,
+                nodeIdentityProvider()
+        );
 
         NodePeers result = provider.getNodePeers();
 
@@ -59,21 +55,18 @@ class ConfiguredNodePeerProviderTest {
 
     @Test
     void shouldRemoveDuplicatedPeers() {
-        CustosProperties properties = new CustosProperties(
-                new CustosProperties.NodeConfig(
-                        "local-node-1",
-                        "0xprivate-key",
-                        "",
-                        List.of(
-                                "http://localhost:8082",
-                                "http://localhost:8082",
-                                "http://localhost:8083"
-                        )
-                ),
-                Map.of()
+        CustosProperties properties = propertiesWithPeers(
+                List.of(
+                        "http://localhost:8082",
+                        "http://localhost:8082",
+                        "http://localhost:8083"
+                )
         );
 
-        ConfiguredNodePeerProvider provider = new ConfiguredNodePeerProvider(properties);
+        ConfiguredNodePeerProvider provider = new ConfiguredNodePeerProvider(
+                properties,
+                nodeIdentityProvider()
+        );
 
         NodePeers result = provider.getNodePeers();
 
@@ -84,18 +77,42 @@ class ConfiguredNodePeerProviderTest {
 
     @Test
     void shouldRejectInvalidPeerBaseUrl() {
-        CustosProperties properties = new CustosProperties(
+        CustosProperties properties = propertiesWithPeers(List.of("banana"));
+
+        ConfiguredNodePeerProvider provider = new ConfiguredNodePeerProvider(
+                properties,
+                nodeIdentityProvider()
+        );
+
+        assertThrows(IllegalStateException.class, provider::getNodePeers);
+    }
+
+    private CustosProperties propertiesWithPeers(List<String> peers) {
+        return new CustosProperties(
                 new CustosProperties.NodeConfig(
-                        "local-node-1",
+                        "",
                         "0xprivate-key",
                         "",
-                        List.of("banana")
+                        "http://localhost:8080",
+                        peers
                 ),
                 Map.of()
         );
+    }
 
-        ConfiguredNodePeerProvider provider = new ConfiguredNodePeerProvider(properties);
+    private NodeIdentityProvider nodeIdentityProvider() {
+        NodeIdentityProvider nodeIdentityProvider = mock(NodeIdentityProvider.class);
 
-        assertThrows(IllegalStateException.class, provider::getNodePeers);
+        when(nodeIdentityProvider.getNodeIdentity()).thenReturn(
+                new NodeIdentity(
+                        "local-node-1",
+                        "0x0000000000000000000000000000000000000001",
+                        "0x0000000000000000000000000000000000000001",
+                        "http://localhost:8080",
+                        "ECDSA_SECP256K1_PERSONAL_SIGN"
+                )
+        );
+
+        return nodeIdentityProvider;
     }
 }

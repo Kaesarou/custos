@@ -1,22 +1,22 @@
 server:
-  port: 8080
+  port: ${SERVER_PORT:8080}
 
 spring:
   application:
     name: custos-node
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/custos
-    username: custos
-    password: custos
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/custos}
+    username: ${SPRING_DATASOURCE_USERNAME:custos}
+    password: ${SPRING_DATASOURCE_PASSWORD:custos}
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:update}
     properties:
       hibernate:
-        format_sql: true
-    show-sql: true
+        format_sql: ${SPRING_JPA_FORMAT_SQL:false}
+    show-sql: ${SPRING_JPA_SHOW_SQL:false}
 
 management:
   endpoints:
@@ -30,14 +30,13 @@ springdoc:
 
 custos:
   node:
-    id: local-node-1
-    private-key: ${CUSTOS_NODE_PRIVATE_KEY:0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80}
-    reward-address: ${CUSTOS_NODE_REWARD_ADDRESS:0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266}
-    peers:
-      - http://localhost:8082
-      - http://localhost:8083
+    id: ${CUSTOS_NODE_ID:}
+    private-key: ${CUSTOS_NODE_PRIVATE_KEY:}
+    reward-address: ${CUSTOS_NODE_REWARD_ADDRESS:}
+    public-base-url: ${CUSTOS_NODE_PUBLIC_BASE_URL:}
+    peers: ${CUSTOS_NODE_PEERS:}
   api:
-    base-path: /api/v1
+    base-path: ${CUSTOS_API_BASE_PATH:/api/v1}
   chains:
     31337:
-      rpc-url: http://custos-test-chain:8545
+      rpc-url: ${CUSTOS_CHAIN_31337_RPC_URL:}

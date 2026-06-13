@@ -1,6 +1,7 @@
 package io.custos.node.adapters.out.config;
 
 import io.custos.node.config.CustosProperties;
+import io.custos.node.core.application.port.out.NodeIdentityProvider;
 import io.custos.node.core.application.port.out.NodePeerProvider;
 import io.custos.node.core.domain.model.NodePeers;
 import org.springframework.stereotype.Component;
@@ -12,15 +13,20 @@ import java.util.List;
 public class ConfiguredNodePeerProvider implements NodePeerProvider {
 
     private final CustosProperties custosProperties;
+    private final NodeIdentityProvider nodeIdentityProvider;
 
-    public ConfiguredNodePeerProvider(CustosProperties custosProperties) {
+    public ConfiguredNodePeerProvider(
+            CustosProperties custosProperties,
+            NodeIdentityProvider nodeIdentityProvider
+    ) {
         this.custosProperties = custosProperties;
+        this.nodeIdentityProvider = nodeIdentityProvider;
     }
 
     @Override
     public NodePeers getNodePeers() {
         return new NodePeers(
-                custosProperties.node().id(),
+                nodeIdentityProvider.getNodeIdentity().nodeId(),
                 configuredPeers()
         );
     }

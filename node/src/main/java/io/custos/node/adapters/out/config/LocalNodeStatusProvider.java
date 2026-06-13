@@ -1,6 +1,6 @@
 package io.custos.node.adapters.out.config;
 
-import io.custos.node.config.CustosProperties;
+import io.custos.node.core.application.port.out.NodeIdentityProvider;
 import io.custos.node.core.application.port.out.NodeStatusProvider;
 import io.custos.node.core.domain.model.NodeStatus;
 import org.springframework.stereotype.Component;
@@ -12,16 +12,16 @@ import java.time.Instant;
 @Component
 public class LocalNodeStatusProvider implements NodeStatusProvider {
 
-    private final CustosProperties custosProperties;
+    private final NodeIdentityProvider nodeIdentityProvider;
     private final Clock clock;
     private final Instant startedAt;
 
     public LocalNodeStatusProvider(
-            CustosProperties custosProperties,
+            NodeIdentityProvider nodeIdentityProvider,
             Clock clock,
             Instant nodeStartedAt
     ) {
-        this.custosProperties = custosProperties;
+        this.nodeIdentityProvider = nodeIdentityProvider;
         this.clock = clock;
         this.startedAt = nodeStartedAt;
     }
@@ -31,7 +31,7 @@ public class LocalNodeStatusProvider implements NodeStatusProvider {
         Instant currentTime = Instant.now(clock);
 
         return new NodeStatus(
-                custosProperties.node().id(),
+                nodeIdentityProvider.getNodeIdentity().nodeId(),
                 "UP",
                 startedAt,
                 currentTime,

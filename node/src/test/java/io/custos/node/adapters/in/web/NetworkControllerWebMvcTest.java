@@ -38,6 +38,7 @@ class NetworkControllerWebMvcTest {
                                                 "local-node-2",
                                                 "0x0000000000000000000000000000000000000001",
                                                 "0x0000000000000000000000000000000000000001",
+                                                "http://localhost:8080",
                                                 "ECDSA_SECP256K1_PERSONAL_SIGN"
                                         ),
                                         new NodeStatus(

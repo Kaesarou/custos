@@ -2,6 +2,7 @@ package io.custos.node.adapters.out.config;
 
 import io.custos.node.config.CustosProperties;
 import io.custos.node.core.application.port.out.NodeCapabilitiesProvider;
+import io.custos.node.core.application.port.out.NodeIdentityProvider;
 import io.custos.node.core.domain.ShareProtectionAlgorithm;
 import io.custos.node.core.domain.model.NodeCapabilities;
 import io.custos.node.core.domain.model.NodeSignatureAlgorithm;
@@ -15,15 +16,20 @@ import java.util.List;
 public class LocalNodeCapabilitiesProvider implements NodeCapabilitiesProvider {
 
     private final CustosProperties custosProperties;
+    private final NodeIdentityProvider nodeIdentityProvider;
 
-    public LocalNodeCapabilitiesProvider(CustosProperties custosProperties) {
+    public LocalNodeCapabilitiesProvider(
+            CustosProperties custosProperties,
+            NodeIdentityProvider nodeIdentityProvider
+    ) {
         this.custosProperties = custosProperties;
+        this.nodeIdentityProvider = nodeIdentityProvider;
     }
 
     @Override
     public NodeCapabilities getNodeCapabilities() {
         return new NodeCapabilities(
-                custosProperties.node().id(),
+                nodeIdentityProvider.getNodeIdentity().nodeId(),
                 List.of(PolicyType.EVM_ERC1155_BALANCE),
                 List.of(ShareProtectionAlgorithm.X25519_HKDF_SHA256_AES_256_GCM),
                 NodeSignatureAlgorithm.ECDSA_SECP256K1_PERSONAL_SIGN,

@@ -1,29 +1,32 @@
 package io.custos.node.adapters.out.config;
 
-import io.custos.node.config.CustosProperties;
+import io.custos.node.core.application.port.out.NodeIdentityProvider;
+import io.custos.node.core.domain.model.NodeIdentity;
 import io.custos.node.core.domain.model.NodeStatus;
 import org.junit.jupiter.api.Test;
 
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;
-import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class LocalNodeStatusProviderTest {
 
     @Test
     void shouldReturnLocalNodeStatus() {
-        CustosProperties properties = new CustosProperties(
-                new CustosProperties.NodeConfig(
+        NodeIdentityProvider nodeIdentityProvider = mock(NodeIdentityProvider.class);
+
+        when(nodeIdentityProvider.getNodeIdentity()).thenReturn(
+                new NodeIdentity(
                         "local-node-1",
-                        "0xprivate-key",
-                        "",
-                        List.of()
-                ),
-                Map.of()
+                        "0x0000000000000000000000000000000000000001",
+                        "0x0000000000000000000000000000000000000001",
+                        "http://localhost:8080",
+                        "ECDSA_SECP256K1_PERSONAL_SIGN"
+                )
         );
 
         Instant startedAt = Instant.parse("2026-05-22T10:00:00Z");
@@ -33,7 +36,7 @@ class LocalNodeStatusProviderTest {
         );
 
         LocalNodeStatusProvider provider = new LocalNodeStatusProvider(
-                properties,
+                nodeIdentityProvider,
                 clock,
                 startedAt
         );

@@ -6,6 +6,7 @@ public record NodeIdentityResponseDto(
         String nodeId,
         String nodeAddress,
         String rewardAddress,
+        String publicBaseUrl,
         String signatureAlgorithm
 ) {
     public static NodeIdentityResponseDto fromDomain(NodeIdentity identity) {
@@ -13,6 +14,7 @@ public record NodeIdentityResponseDto(
                 identity.nodeId(),
                 identity.nodeAddress(),
                 identity.rewardAddress(),
+                identity.publicBaseUrl(),
                 identity.signatureAlgorithm()
         );
     }

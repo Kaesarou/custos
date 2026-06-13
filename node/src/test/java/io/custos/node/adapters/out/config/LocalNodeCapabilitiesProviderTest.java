@@ -1,8 +1,10 @@
 package io.custos.node.adapters.out.config;
 
 import io.custos.node.config.CustosProperties;
+import io.custos.node.core.application.port.out.NodeIdentityProvider;
 import io.custos.node.core.domain.ShareProtectionAlgorithm;
 import io.custos.node.core.domain.model.NodeCapabilities;
+import io.custos.node.core.domain.model.NodeIdentity;
 import io.custos.node.core.domain.model.NodeSignatureAlgorithm;
 import io.custos.node.core.domain.model.PolicyType;
 import org.junit.jupiter.api.Test;
@@ -11,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class LocalNodeCapabilitiesProviderTest {
 
@@ -18,9 +22,10 @@ class LocalNodeCapabilitiesProviderTest {
     void shouldReturnLocalNodeCapabilities() {
         CustosProperties properties = new CustosProperties(
                 new CustosProperties.NodeConfig(
-                        "local-node-1",
+                        "",
                         "0xprivate-key",
                         "",
+                        "http://localhost:8080",
                         List.of()
                 ),
                 Map.of(
@@ -29,7 +34,10 @@ class LocalNodeCapabilitiesProviderTest {
                 )
         );
 
-        LocalNodeCapabilitiesProvider provider = new LocalNodeCapabilitiesProvider(properties);
+        LocalNodeCapabilitiesProvider provider = new LocalNodeCapabilitiesProvider(
+                properties,
+                nodeIdentityProvider()
+        );
 
         NodeCapabilities result = provider.getNodeCapabilities();
 
@@ -45,5 +53,21 @@ class LocalNodeCapabilitiesProviderTest {
         );
         assertEquals(1, result.supportedChains().size());
         assertEquals(31337L, result.supportedChains().get(0).chainId());
+    }
+
+    private NodeIdentityProvider nodeIdentityProvider() {
+        NodeIdentityProvider nodeIdentityProvider = mock(NodeIdentityProvider.class);
+
+        when(nodeIdentityProvider.getNodeIdentity()).thenReturn(
+                new NodeIdentity(
+                        "local-node-1",
+                        "0x0000000000000000000000000000000000000001",
+                        "0x0000000000000000000000000000000000000001",
+                        "http://localhost:8080",
+                        "ECDSA_SECP256K1_PERSONAL_SIGN"
+                )
+        );
+
+        return nodeIdentityProvider;
     }
 }

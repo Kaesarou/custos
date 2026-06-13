@@ -1,57 +1,55 @@
 services:
-  custos-test-chain:
-    build:
-      context: ./custos-test-chain
-      dockerfile: Dockerfile
-    container_name: custos-test-chain
-    profiles:
-      - dev
-    ports:
-      - "8545:8545"
-    volumes:
-      - ./custos-test-chain/deployments:/app/deployments
-
-  postgres:
-    image: postgres:18-alpine
-    container_name: custos-postgres
-    environment:
-      POSTGRES_DB: custos
-      POSTGRES_USER: custos
-      POSTGRES_PASSWORD: custos
-    ports:
-      - "5432:5432"
-    volumes:
-      - custos-postgres-data:/var/lib/postgresql
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U custos -d custos" ]
-      interval: 5s
-      timeout: 5s
-      retries: 10
-
-  adminer:
-    image: adminer:latest
-    container_name: custos-adminer
-    ports:
-      - "8081:8080"
-    depends_on:
-      - postgres
-
   custos-node:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: custos-node:0.1.0-SNAPSHOT
-    container_name: custos-node
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/custos
-      SPRING_DATASOURCE_USERNAME: custos
-      SPRING_DATASOURCE_PASSWORD: custos
-      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.PostgreSQLDialect
+    image: ${CUSTOS_NODE_IMAGE:-custos/custos-node:latest}
+    container_name: ${CUSTOS_NODE_CONTAINER_NAME:-custos-node}
+    restart: unless-stopped
+
     ports:
-      - "8080:8080"
+      - "${CUSTOS_HTTP_PORT:-8080}:8080"
+
+    environment:
+      SERVER_PORT: 8080
+
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-custos}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-custos}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+
+      SPRING_JPA_HIBERNATE_DDL_AUTO: ${SPRING_JPA_HIBERNATE_DDL_AUTO:-update}
+      SPRING_JPA_SHOW_SQL: ${SPRING_JPA_SHOW_SQL:-false}
+      SPRING_JPA_FORMAT_SQL: ${SPRING_JPA_FORMAT_SQL:-false}
+
+      CUSTOS_API_BASE_PATH: ${CUSTOS_API_BASE_PATH:-/api/v1}
+
+      CUSTOS_NODE_ID: ${CUSTOS_NODE_ID:-}
+      CUSTOS_NODE_PRIVATE_KEY: ${CUSTOS_NODE_PRIVATE_KEY}
+      CUSTOS_NODE_REWARD_ADDRESS: ${CUSTOS_NODE_REWARD_ADDRESS:-}
+      CUSTOS_NODE_PUBLIC_BASE_URL: ${CUSTOS_NODE_PUBLIC_BASE_URL}
+      CUSTOS_NODE_PEERS: ${CUSTOS_NODE_PEERS:-}
+
+      CUSTOS_CHAIN_31337_RPC_URL: ${CUSTOS_CHAIN_31337_RPC_URL}
+
     depends_on:
       postgres:
         condition: service_healthy
 
+  postgres:
+    image: postgres:18-alpine
+    container_name: ${POSTGRES_CONTAINER_NAME:-custos-postgres}
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-custos}
+      POSTGRES_USER: ${POSTGRES_USER:-custos}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+    volumes:
+      - postgres-data:/var/lib/postgresql
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-custos} -d ${POSTGRES_DB:-custos}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
 volumes:
-  custos-postgres-data:
+  postgres-data:

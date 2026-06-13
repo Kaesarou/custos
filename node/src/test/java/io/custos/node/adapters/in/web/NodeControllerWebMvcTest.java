@@ -45,6 +45,7 @@ class NodeControllerWebMvcTest {
                         "local-node-1",
                         "0x90f79bf6eb2c4f870365e785982e1f101e93b906",
                         "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC",
+                        "http://localhost:8080",
                         NodeSignatureAlgorithm.ECDSA_SECP256K1_PERSONAL_SIGN
                 )
         );

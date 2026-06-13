@@ -1,0 +1,75 @@
+services:
+  custos-test-chain:
+    build:
+      context: ./custos-test-chain
+      dockerfile: Dockerfile
+    container_name: custos-test-chain
+    ports:
+      - "${CUSTOS_TEST_CHAIN_PORT:-8545}:8545"
+    volumes:
+      - ./custos-test-chain/deployments:/app/deployments
+
+  postgres:
+    image: postgres:18-alpine
+    container_name: custos-postgres-dev
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-custos}
+      POSTGRES_USER: ${POSTGRES_USER:-custos}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-custos}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - custos-postgres-dev-data:/var/lib/postgresql
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-custos} -d ${POSTGRES_DB:-custos}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  adminer:
+    image: adminer:latest
+    container_name: custos-adminer-dev
+    ports:
+      - "${ADMINER_PORT:-8081}:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  custos-node:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: custos-node:${CUSTOS_NODE_VERSION:-0.1.0-SNAPSHOT}
+    container_name: custos-node-dev
+    environment:
+      SERVER_PORT: 8080
+
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-custos}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-custos}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-custos}
+      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.PostgreSQLDialect
+      SPRING_JPA_HIBERNATE_DDL_AUTO: ${SPRING_JPA_HIBERNATE_DDL_AUTO:-update}
+      SPRING_JPA_SHOW_SQL: ${SPRING_JPA_SHOW_SQL:-false}
+      SPRING_JPA_FORMAT_SQL: ${SPRING_JPA_FORMAT_SQL:-false}
+
+      CUSTOS_API_BASE_PATH: ${CUSTOS_API_BASE_PATH:-/api/v1}
+
+      CUSTOS_NODE_ID: ${CUSTOS_NODE_ID:-}
+      CUSTOS_NODE_PRIVATE_KEY: ${CUSTOS_NODE_PRIVATE_KEY}
+      CUSTOS_NODE_REWARD_ADDRESS: ${CUSTOS_NODE_REWARD_ADDRESS:-}
+      CUSTOS_NODE_PUBLIC_BASE_URL: ${CUSTOS_NODE_PUBLIC_BASE_URL}
+      CUSTOS_NODE_PEERS: ${CUSTOS_NODE_PEERS:-}
+
+      CUSTOS_CHAIN_31337_RPC_URL: ${CUSTOS_CHAIN_31337_RPC_URL:-http://custos-test-chain:8545}
+
+    ports:
+      - "${CUSTOS_HTTP_PORT:-8080}:8080"
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+      custos-test-chain:
+        condition: service_started
+
+volumes:
+  custos-postgres-dev-data:
