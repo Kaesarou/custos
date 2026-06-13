@@ -4,12 +4,7 @@ import io.custos.node.adapters.out.network.dto.RemoteNodeCapabilitiesDto;
 import io.custos.node.adapters.out.network.dto.RemoteNodeIdentityDto;
 import io.custos.node.adapters.out.network.dto.RemoteNodeStatusDto;
 import io.custos.node.core.application.port.out.PeerClient;
-import io.custos.node.core.domain.model.NodeCapabilities;
-import io.custos.node.core.domain.model.NodeIdentity;
-import io.custos.node.core.domain.model.NodeSignatureAlgorithm;
-import io.custos.node.core.domain.model.NodeStatus;
-import io.custos.node.core.domain.model.PeerNodeView;
-import io.custos.node.core.domain.model.PolicyType;
+import io.custos.node.core.domain.model.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
@@ -60,7 +55,7 @@ public class HttpPeerClient implements PeerClient {
                 .body(RemoteNodeIdentityDto.class);
 
         if (response == null) {
-            throw new IllegalStateException("Empty identity response");
+            throw new IllegalArgumentException("Empty identity response");
         }
 
         return new NodeIdentity(
@@ -79,7 +74,7 @@ public class HttpPeerClient implements PeerClient {
                 .body(RemoteNodeStatusDto.class);
 
         if (response == null) {
-            throw new IllegalStateException("Empty status response");
+            throw new IllegalArgumentException("Empty status response");
         }
 
         return new NodeStatus(
@@ -98,7 +93,7 @@ public class HttpPeerClient implements PeerClient {
                 .body(RemoteNodeCapabilitiesDto.class);
 
         if (response == null) {
-            throw new IllegalStateException("Empty capabilities response");
+            throw new IllegalArgumentException("Empty capabilities response");
         }
 
         return new NodeCapabilities(

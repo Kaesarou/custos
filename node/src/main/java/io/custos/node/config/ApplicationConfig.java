@@ -52,7 +52,7 @@ public class ApplicationConfig {
 
     @Bean
     RetrieveSecretShareUseCase retrieveSecretShareUseCase(
-            CustosProperties custosProperties,
+            NodeIdentityProvider nodeIdentityProvider,
             Clock clock,
             SecretShareRepository repository,
             WalletSignatureVerifier walletSignatureVerifier,
@@ -62,7 +62,7 @@ public class ApplicationConfig {
             NodeSignatureService nodeSignatureService
     ) {
         return new RetrieveSecretShareService(
-                custosProperties.node().id(),
+                nodeIdentityProvider.getNodeIdentity().nodeId(),
                 clock,
                 repository,
                 walletSignatureVerifier,

@@ -1,7 +1,6 @@
 package io.custos.node.adapters.out.security;
 
 import io.custos.node.core.application.exception.InvalidPublisherSignatureException;
-import io.custos.node.core.application.exception.InvalidWalletSignatureException;
 import io.custos.node.core.application.port.in.command.StoreSecretShareCommand;
 import io.custos.node.core.domain.model.AccessPolicy;
 import io.custos.node.core.domain.model.PolicyType;

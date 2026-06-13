@@ -70,6 +70,7 @@ class NetworkControllerWebMvcTest {
                 .andExpect(jsonPath("$.peers[0].baseUrl").value("http://localhost:8082"))
                 .andExpect(jsonPath("$.peers[0].reachable").value(true))
                 .andExpect(jsonPath("$.peers[0].identity.nodeId").value("local-node-2"))
+                .andExpect(jsonPath("$.peers[0].identity.publicBaseUrl").value("http://localhost:8080"))
                 .andExpect(jsonPath("$.peers[0].status.status").value("UP"))
                 .andExpect(jsonPath("$.peers[0].capabilities.supportedPolicyTypes[0]").value("EVM_ERC1155_BALANCE"))
                 .andExpect(jsonPath("$.peers[1].baseUrl").value("http://localhost:8083"))

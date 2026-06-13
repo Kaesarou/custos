@@ -1,12 +1,8 @@
  package io.custos.node.adapters.in.web.dto;
 
-import io.custos.node.core.domain.model.LocalNetworkView;
-import io.custos.node.core.domain.model.NodeCapabilities;
-import io.custos.node.core.domain.model.NodeIdentity;
-import io.custos.node.core.domain.model.NodeStatus;
-import io.custos.node.core.domain.model.PeerNodeView;
+ import io.custos.node.core.domain.model.*;
 
-import java.util.List;
+ import java.util.List;
 
 public record NetworkViewResponseDto(
         String observerNodeId,
@@ -46,6 +42,7 @@ public record NetworkViewResponseDto(
             String nodeId,
             String nodeAddress,
             String rewardAddress,
+            String publicBaseUrl,
             String signatureAlgorithm
     ) {
         public static NodeIdentityDto fromDomain(NodeIdentity identity) {
@@ -53,6 +50,7 @@ public record NetworkViewResponseDto(
                     identity.nodeId(),
                     identity.nodeAddress(),
                     identity.rewardAddress(),
+                    identity.publicBaseUrl(),
                     identity.signatureAlgorithm()
             );
         }

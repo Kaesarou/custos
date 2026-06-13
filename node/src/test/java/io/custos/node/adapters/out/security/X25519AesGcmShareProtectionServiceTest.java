@@ -1,8 +1,8 @@
 package io.custos.node.adapters.out.security;
 
 import io.custos.node.core.application.exception.InvalidReaderPublicKeyException;
-import io.custos.node.core.domain.model.ProtectedShare;
 import io.custos.node.core.domain.ShareProtectionAlgorithm;
+import io.custos.node.core.domain.model.ProtectedShare;
 import org.bouncycastle.crypto.digests.SHA256Digest;
 import org.bouncycastle.crypto.generators.HKDFBytesGenerator;
 import org.bouncycastle.crypto.params.HKDFParameters;
